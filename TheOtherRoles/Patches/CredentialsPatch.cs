@@ -117,6 +117,7 @@ namespace TheOtherRoles.Patches
         [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.OpenAccountMenu))]
         [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.OpenCredits))]
         [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.OpenGameModeMenu))]
+        [HarmonyPatch(typeof(AccountManager), nameof(AccountManager.OpenAccountWindow))]
         private static class HidePatch
         {
             static void Postfix()
