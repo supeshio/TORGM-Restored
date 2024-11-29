@@ -95,22 +95,9 @@ namespace TheOtherRoles
             CustomOptionHolder.Load();
             CustomColors.Load();
 
-            // Types below must be patched before completely loaded
-            var toPatch = new[]
-            {
-                typeof(FixLoginGlitchPatch), // Patch all after the login logic finished
-                typeof(CustomColors), // Custom colors
-                typeof(CredentialsPatch), // Credentials & Mod stamp
-            };
-
-            toPatch.Do(t => Harmony.PatchAll(t));
+            Harmony.PatchAll();
 
             Logger.LogMessage($"TORGM 354 ({SupportString})");
-        }
-
-        public static void DoPatch()
-        {
-            Instance.Harmony.PatchAll();
         }
 
         public static Sprite GetModStamp()
@@ -127,22 +114,6 @@ namespace TheOtherRoles
         public static void Postfix(out bool __result)
         {
             __result = false;
-        }
-    }
-
-    [HarmonyPatch]
-    public static class FixLoginGlitchPatch
-    {
-        [HarmonyPatch(typeof(AccountTab), nameof(AccountTab.UpdateVisuals))]
-        [HarmonyPostfix]
-        static void OnLogin()
-        {
-            if (!TheOtherRolesPlugin.Loaded)
-            {
-                TheOtherRolesPlugin.DoPatch();
-                TheOtherRolesPlugin.Loaded = true;
-                SceneManager.LoadScene("MainMenu"); // Idk why but buttons wont show when first load
-            }
         }
     }
 

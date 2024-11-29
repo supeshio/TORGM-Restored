@@ -114,14 +114,17 @@ namespace TheOtherRoles.Patches
             }
         }
 
-        [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.OpenAccountMenu))]
-        [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.OpenCredits))]
-        [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.OpenGameModeMenu))]
-        [HarmonyPatch(typeof(AccountManager), nameof(AccountManager.OpenAccountWindow))]
-        private static class HidePatch
+        [HarmonyPatch]
+        public static class HidePatch
         {
-            static void Postfix()
+            [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.OpenAccountMenu))]
+            [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.OpenCredits))]
+            [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.OpenGameModeMenu))]
+            [HarmonyPatch(typeof(AccountManager), nameof(AccountManager.OpenAccountWindow))]
+            [HarmonyPostfix]
+            static void HideModStuff()
             {
+                TheOtherRolesPlugin.Logger.LogInfo("Hide mod info");
                 GameObject.Find("bannerLogo_TOR")?.SetActive(false);
                 MainMenuStartPatch.Buttons.DoIf(b => b, b => b.gameObject.SetActive(false));
             }
