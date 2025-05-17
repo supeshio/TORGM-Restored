@@ -351,7 +351,7 @@ namespace TheOtherRoles
             }
 
             public static Sprite getAdminSprite() {
-                byte mapId = GameOptionsManager.Instance.CurrentGameOptions.Cast<NormalGameOptionsV08>().MapId;
+                byte mapId = GameOptionsManager.Instance.CurrentGameOptions.Cast<NormalGameOptionsV09>().MapId;
                 UseButtonSettings button = HudManager.Instance.UseButton.fastUseSettings[ImageNames.PolusAdminButton]; // Polus
                 if (mapId == 0 || mapId == 3) button = HudManager.Instance.UseButton.fastUseSettings[ImageNames.AdminMapButton]; // Skeld || Dleks
                 else if (mapId == 1) button = HudManager.Instance.UseButton.fastUseSettings[ImageNames.MIRAAdminButton]; // Mira HQ

@@ -21,8 +21,8 @@ namespace TheOtherRoles
     public class TheOtherRolesPlugin : BasePlugin
     {
         public const string Id = "me.eisbison.theotherroles";
-        public const string VersionString = "3.5.4";
-        public const string SupportString = "24.11.26.1";
+        public const string VersionString = "4.0.0";
+        
         public static Version Version = Version.Parse(VersionString);
         public static bool Loaded = false;
         internal static BepInEx.Logging.ManualLogSource Logger;
@@ -86,9 +86,9 @@ namespace TheOtherRoles
 
             UpdateRegions();
 
-            GameOptionsData.RecommendedImpostors = Enumerable.Repeat(3, 16).ToArray();
-            GameOptionsData.MaxImpostors = Enumerable.Repeat(15, 16).ToArray(); // Max Imp = Recommended Imp = 3
-            GameOptionsData.MinPlayers = Enumerable.Repeat(4, 15).ToArray(); // Min Players = 4
+            LegacyGameOptions.RecommendedImpostors = Enumerable.Repeat(3, 16).ToArray();
+            LegacyGameOptions.MaxImpostors = Enumerable.Repeat(15, 16).ToArray(); // Max Imp = Recommended Imp = 3
+            LegacyGameOptions.MinPlayers = Enumerable.Repeat(4, 15).ToArray(); // Min Players = 4
 
             DebugMode = Config.Bind("Custom", "Enable Debug Mode", false);
             Instance = this;
@@ -97,7 +97,7 @@ namespace TheOtherRoles
 
             Harmony.PatchAll();
 
-            Logger.LogMessage($"TORGM 354 ({SupportString})");
+            Logger.LogMessage($"TORGM 354 ({VersionString})");
         }
 
         public static Sprite GetModStamp()
@@ -108,14 +108,14 @@ namespace TheOtherRoles
     }
 
     // Deactivate bans, since I always leave my local testing game and ban myself
-    [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.AmBanned), MethodType.Getter)]
-    public static class AmBannedPatch
-    {
-        public static void Postfix(out bool __result)
-        {
-            __result = false;
-        }
-    }
+    //[HarmonyPatch(typeof(StatsManager), nameof(StatsManager.AmBanned), MethodType.Getter)]
+    //public static class AmBannedPatch
+    //{
+    //    public static void Postfix(out bool __result)
+    //    {
+    //        __result = false;
+    //    }
+    //}
 
     [HarmonyPatch(typeof(ChatController), nameof(ChatController.Awake))]
     public static class ChatControllerAwakePatch

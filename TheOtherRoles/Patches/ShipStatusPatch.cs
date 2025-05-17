@@ -31,19 +31,19 @@ namespace TheOtherRoles.Patches {
                 || (Jester.jester != null && Jester.jester.PlayerId == player.PlayerId && Jester.hasImpostorVision) // Jester with Impostor vision
                 || (player.Object.isRole(RoleType.Fox))
                 )
-                __result = __instance.MaxLightRadius * GameOptionsManager.Instance.CurrentGameOptions.Cast<NormalGameOptionsV08>().ImpostorLightMod;
+                __result = __instance.MaxLightRadius * GameOptionsManager.Instance.CurrentGameOptions.Cast<NormalGameOptionsV09>().ImpostorLightMod;
             else if (PlayerControl.LocalPlayer.isRole(RoleType.Lighter) && Lighter.isLightActive(PlayerControl.LocalPlayer)) // if player is Lighter and Lighter has his ability active
                 __result = Mathf.Lerp(__instance.MaxLightRadius * Lighter.lighterModeLightsOffVision, __instance.MaxLightRadius * Lighter.lighterModeLightsOnVision, num);
             else if (Trickster.trickster != null && Trickster.lightsOutTimer > 0f) {
                 float lerpValue = 1f;
                 if (Trickster.lightsOutDuration - Trickster.lightsOutTimer < 0.5f) lerpValue = Mathf.Clamp01((Trickster.lightsOutDuration - Trickster.lightsOutTimer) * 2);
                 else if (Trickster.lightsOutTimer < 0.5) lerpValue = Mathf.Clamp01(Trickster.lightsOutTimer * 2);
-                __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, 1 - lerpValue) * GameOptionsManager.Instance.CurrentGameOptions.Cast<NormalGameOptionsV08>().CrewLightMod; // Instant lights out? Maybe add a smooth transition?
+                __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, 1 - lerpValue) * GameOptionsManager.Instance.CurrentGameOptions.Cast<NormalGameOptionsV09>().CrewLightMod; // Instant lights out? Maybe add a smooth transition?
             }
             else if (Lawyer.lawyer != null && Lawyer.lawyer.PlayerId == player.PlayerId) // if player is Lighter and Lighter has his ability active
                 __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius * Lawyer.vision, num);
             else
-                __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, num) * GameOptionsManager.Instance.CurrentGameOptions.Cast<NormalGameOptionsV08>().CrewLightMod;
+                __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, num) * GameOptionsManager.Instance.CurrentGameOptions.Cast<NormalGameOptionsV09>().CrewLightMod;
             return false;
         }
 
@@ -77,7 +77,7 @@ namespace TheOtherRoles.Patches {
             var commonTaskCount = __instance.CommonTasks.Count;
             var normalTaskCount = __instance.ShortTasks.Count;
             var longTaskCount = __instance.LongTasks.Count;
-            var option = GameOptionsManager.Instance.CurrentGameOptions.Cast<NormalGameOptionsV08>();
+            var option = GameOptionsManager.Instance.CurrentGameOptions.Cast<NormalGameOptionsV09>();
             originalNumCommonTasksOption = option.NumCommonTasks;
             originalNumShortTasksOption = option.NumShortTasks;
             originalNumLongTasksOption = option.NumLongTasks;
@@ -92,7 +92,7 @@ namespace TheOtherRoles.Patches {
         public static void Postfix3(ShipStatus __instance)
         {
             // Restore original settings after the tasks have been selected
-            var option = GameOptionsManager.Instance.CurrentGameOptions.Cast<NormalGameOptionsV08>();
+            var option = GameOptionsManager.Instance.CurrentGameOptions.Cast<NormalGameOptionsV09>();
             option.NumCommonTasks = originalNumCommonTasksOption;
             option.NumShortTasks = originalNumShortTasksOption;
             option.NumLongTasks = originalNumLongTasksOption;

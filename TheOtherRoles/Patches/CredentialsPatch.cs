@@ -10,9 +10,9 @@ namespace TheOtherRoles.Patches
     public static class CredentialsPatch
     {
 
-        public const string BaseCredentials = $@"<size=130%><color=#ff351f>TheOtherRoles GM</color></size> v{TheOtherRolesPlugin.VersionString} <size=80%>({TheOtherRolesPlugin.SupportString})</size>";
+        public const string BaseCredentials = $@"<size=130%><color=#ff351f>TheOtherRoles GM</color></size> v{TheOtherRolesPlugin.VersionString})</size>";
 
-        public const string ContributorsCredentials = "Original TORGM (v3.5.4) GitHub Contributors: Alex2911, amsyarasyiq, gendelo3\n{0}\n\nNew Version Among Us Support: JieGeLovesDengDuaLang";
+        public const string ContributorsCredentials = "Original TORGM (v3.5.4) GitHub Contributors: Alex2911, amsyarasyiq, gendelo3\n{0}";
 
 
         [HarmonyPatch(typeof(PingTracker), nameof(PingTracker.Update))]
@@ -56,19 +56,13 @@ namespace TheOtherRoles.Patches
                 var creditsPopup = Object.Instantiate(popupPrefab, popupPrefab.transform.parent);
                 creditsPopup.name = PopupName;
 
-                CreateButton(__instance, __instance.quitButton, GameObject.Find("RightPanel").transform, new(-1, -1, 0), "BILIBILI",
-                    () =>
-                    {
-                        Application.OpenURL("https://space.bilibili.com/483236840");
-                    }, new(0, 174, 236, byte.MaxValue), new(0, 134, 236, byte.MaxValue));
-
                 CreateButton(__instance, __instance.quitButton, GameObject.Find("RightPanel").transform, new(1, -1, 0), "GITHUB",
                     () =>
                     {
-                        Application.OpenURL("https://github.com/JieGeLovesDengDuaLang/TheOtherRoles-GM");
+                        Application.OpenURL("https://github.com/supeshio/TORGM-Restored");
                     }, new(153, 153, 153, byte.MaxValue), new(209, 209, 209, byte.MaxValue));
 
-                CreateButton(__instance, __instance.quitButton, GameObject.Find("RightPanel").transform, new(0, -1.5f, 0), ModTranslation.GetString("CreditsLabel"),
+                CreateButton(__instance, __instance.quitButton, GameObject.Find("RightPanel").transform, new(-1, -1f, 0), ModTranslation.GetString("CreditsLabel"),
                     () =>
                     {
                         creditsPopup.gameObject.SetActive(true);

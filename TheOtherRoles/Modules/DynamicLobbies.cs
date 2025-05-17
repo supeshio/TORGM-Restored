@@ -25,7 +25,7 @@ namespace TheOtherRoles.Modules {
                                 } else {
                                     LobbyLimit = Math.Clamp(LobbyLimit, 4, 15);
                                     if (LobbyLimit != GameOptionsManager.Instance.CurrentGameOptions.MaxPlayers) {
-                                        GameOptionsManager.Instance.CurrentGameOptions.Cast<NormalGameOptionsV08>().MaxPlayers = LobbyLimit;
+                                        GameOptionsManager.Instance.CurrentGameOptions.Cast<NormalGameOptionsV09>().MaxPlayers = LobbyLimit;
                                         DestroyableSingleton<GameStartManager>.Instance.LastPlayerCount = LobbyLimit;
                                         GameManager.Instance.LogicOptions.SyncOptions();
                                         __instance.AddChat(PlayerControl.LocalPlayer, $"Lobby Size changed to {LobbyLimit} players");
@@ -44,13 +44,13 @@ namespace TheOtherRoles.Modules {
         }
         [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.HostGame))]
         public static class InnerNetClientHostPatch {
-            public static void Prefix(InnerNet.InnerNetClient __instance, [HarmonyArgument(0)] GameOptionsData settings) {
+            public static void Prefix(InnerNet.InnerNetClient __instance, [HarmonyArgument(0)] IGameOptions settings) {
                 DynamicLobbies.LobbyLimit = settings.MaxPlayers;
-                settings.MaxPlayers = 15; // Force 15 Player Lobby on Server
+                settings.SetInt(Int32OptionNames.MaxPlayers,15); // Force 15 Player Lobby on Server
                 DataManager.Settings.Multiplayer.ChatMode = InnerNet.QuickChatModes.FreeChatOrQuickChat;
             }
-            public static void Postfix(InnerNet.InnerNetClient __instance, [HarmonyArgument(0)] GameOptionsData settings) {
-                settings.MaxPlayers = DynamicLobbies.LobbyLimit;
+            public static void Postfix(InnerNet.InnerNetClient __instance, [HarmonyArgument(0)] IGameOptions settings) {
+                 settings.SetInt(Int32OptionNames.MaxPlayers, DynamicLobbies.LobbyLimit);
             }
         }
         [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.JoinGame))]

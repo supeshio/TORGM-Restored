@@ -1229,7 +1229,7 @@ namespace TheOtherRoles.Patches
             if (Mini.mini != null && PlayerControl.LocalPlayer == Mini.mini && Mini.mini.Data.Role.IsImpostor && Mini.mini == __instance)
             {
                 var multiplier = Mini.isGrownUp() ? 0.66f : 2f;
-                Mini.mini.SetKillTimer(GameOptionsManager.Instance.CurrentGameOptions.Cast<NormalGameOptionsV08>().KillCooldown * multiplier);
+                Mini.mini.SetKillTimer(GameOptionsManager.Instance.CurrentGameOptions.Cast<NormalGameOptionsV09>().KillCooldown * multiplier);
             }
 
             // Set bountyHunter cooldown

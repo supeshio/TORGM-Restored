@@ -10,10 +10,10 @@ using AmongUs.GameOptions;
 
 namespace TheOtherRoles.Patches
 {
-    [HarmonyPatch(typeof(RoleOptionsData), nameof(RoleOptionsData.GetNumPerGame))]
+    [HarmonyPatch(typeof(LegacyRoleOptionsCollection), nameof(LegacyRoleOptionsCollection.GetNumPerGame))]
     class RoleOptionsDataGetNumPerGamePatch
     {
-        public static void Postfix(ref int __result, ref RoleTypes role)
+        public static void Postfix(ref int __result, [HarmonyArgument(0)] ref  RoleTypes role)
         {
             if (role == RoleTypes.Crewmate || role == RoleTypes.Impostor) return;
 
