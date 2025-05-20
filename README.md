@@ -1,6 +1,6 @@
 ﻿# The Other Roles: GM Edition
 
-This fork is based on TORGM v3.5.4, and it supports new Version.
+This fork is based on TORGM v3.5.4, and it supports new version.
 
 > [!NOTE]
 > * Custom hats are not (even never) supported yet.<br/>
