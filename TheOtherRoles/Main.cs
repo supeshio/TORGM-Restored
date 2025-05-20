@@ -1,11 +1,15 @@
 ﻿global using Object = UnityEngine.Object;
+using AmongUs.Data;
 using AmongUs.Data.Legacy;
+using AmongUs.Data.Player;
 using AmongUs.GameOptions;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using Hazel;
+using Il2CppInterop.Generator.Extensions;
+using InnerNet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +25,7 @@ namespace TheOtherRoles
     public class TheOtherRolesPlugin : BasePlugin
     {
         public const string Id = "me.eisbison.theotherroles";
-        public const string VersionString = "4.0.0";
+        public const string VersionString = "4.1.0";
         
         public static Version Version = Version.Parse(VersionString);
         public static bool Loaded = false;
@@ -98,6 +102,7 @@ namespace TheOtherRoles
             Harmony.PatchAll();
 
             Logger.LogMessage($"TORGM 354 ({VersionString})");
+            Logger.LogMessage($"Major:{Version.Major}\nMinor{Version.Minor}\nBuild:{Version.Build}\n{(byte)(TheOtherRolesPlugin.Version.Revision < 0 ? 0xFF : TheOtherRolesPlugin.Version.Revision)}");
         }
 
         public static Sprite GetModStamp()
@@ -108,24 +113,24 @@ namespace TheOtherRoles
     }
 
     // Deactivate bans, since I always leave my local testing game and ban myself
-    //[HarmonyPatch(typeof(StatsManager), nameof(StatsManager.AmBanned), MethodType.Getter)]
-    //public static class AmBannedPatch
-    //{
-    //    public static void Postfix(out bool __result)
-    //    {
-    //        __result = false;
-    //    }
-    //}
+    [HarmonyPatch(typeof(PlayerBanData), nameof(PlayerBanData.IsBanned), MethodType.Getter)]
+    public static class AmBannedPatch
+    {
+        public static void Postfix(out bool __result)
+        {
+            __result = false;
+        }
+    }
 
+    
     [HarmonyPatch(typeof(ChatController), nameof(ChatController.Awake))]
     public static class ChatControllerAwakePatch
     {
         private static void Prefix()
         {
-            if (!EOSManager.Instance.IsMinorOrWaiting())
+            if (!EOSManager.Instance.isKWSMinor)
             {
-                LegacySaveManager.chatModeType = 1;
-                LegacySaveManager.isGuest = false;
+                DataManager.Settings.Multiplayer.ChatMode = InnerNet.QuickChatModes.FreeChatOrQuickChat;
             }
         }
     }

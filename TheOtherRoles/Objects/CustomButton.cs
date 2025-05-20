@@ -50,7 +50,7 @@ namespace TheOtherRoles.Objects {
             actionButton = UnityEngine.Object.Instantiate(hudManager.KillButton, hudManager.KillButton.transform.parent);
             actionButton.graphic.sprite = Sprite;
             PassiveButton button = actionButton.GetComponent<PassiveButton>();
-            button.OnClick = new Button.ButtonClickedEvent();
+            button.OnClick = new();
             button.OnClick.AddListener((UnityEngine.Events.UnityAction)onClickEvent);
 
             LocalScale = actionButton.transform.localScale;

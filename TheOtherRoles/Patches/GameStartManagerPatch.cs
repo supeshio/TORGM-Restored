@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Hazel;
 using System;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using TMPro;
 
 namespace TheOtherRoles.Patches {
     public class GameStartManagerPatch  {
@@ -23,6 +24,7 @@ namespace TheOtherRoles.Patches {
                 }
             }
         }
+        public static TextMeshPro ErrorText;
 
         [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Start))]
         public class GameStartManagerStartPatch {
@@ -37,6 +39,17 @@ namespace TheOtherRoles.Patches {
                 string code = InnerNet.GameCode.IntToGameName(AmongUsClient.Instance.GameId);
                 GUIUtility.systemCopyBuffer = code;
                 lobbyCodeText = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.RoomCode, new Il2CppReferenceArray<Il2CppSystem.Object>(0)) + "\r\n" + code;
+                ErrorText = new GameObject("ErrorText").AddComponent<TextMeshPro>();
+                ErrorText.transform.SetParent(HudManager.Instance.gameObject.transform);
+                ErrorText.text = "";
+                ErrorText.fontSizeMax = ErrorText.fontSizeMin = ErrorText.fontSize = 5;
+                ErrorText.gameObject.layer = 5;
+                ErrorText.transform.localPosition = new Vector3(0, 0, -15);
+                ErrorText.color = Color.red;
+                ErrorText.material =    HudManager.Instance.Chat.quickChatMenu.timer.text.fontMaterial;
+                ErrorText.alignment = TextAlignmentOptions.Center;
+                ErrorText.autoSizeTextContainer = true;
+                ErrorText.enableWordWrapping = false;
             }
         }
 
@@ -68,29 +81,28 @@ namespace TheOtherRoles.Patches {
                             continue;
                         else if (!playerVersions.ContainsKey(client.Id))  {
                             blockStart = true;
-                            message += $"<color=#FF0000FF>{client.Character.Data.PlayerName}:  {ModTranslation.GetString("errorNotInstalled")}\n</color>";
+                            message += $"{client.Character.Data.PlayerName}:  {ModTranslation.GetString("errorNotInstalled")}\n";
                         } else {
                             PlayerVersion PV = playerVersions[client.Id];
                             int diff = TheOtherRolesPlugin.Version.CompareTo(PV.version);
                             if (diff > 0) {
-                                message += $"<color=#FF0000FF>{client.Character.Data.PlayerName}:  {ModTranslation.GetString("errorOlderVersion")} (v{playerVersions[client.Id].version.ToString()})\n</color>";
+                                message += $"{client.Character.Data.PlayerName}:  {ModTranslation.GetString("errorOlderVersion")} (v{playerVersions[client.Id].version})\n";
                                 blockStart = true;
                             } else if (diff < 0) {
-                                message += $"<color=#FF0000FF>{client.Character.Data.PlayerName}:  {ModTranslation.GetString("errorNewerVersion")} (v{playerVersions[client.Id].version.ToString()})\n</color>";
+                                message += $"{client.Character.Data.PlayerName}:  {ModTranslation.GetString("errorNewerVersion")} (v{playerVersions[client.Id].version})\n";
                                 blockStart = true;
                             } else if (!PV.GuidMatches()) { // version presumably matches, check if Guid matches
-                                message += $"<color=#FF0000FF>{client.Character.Data.PlayerName}:  {ModTranslation.GetString("errorWrongVersion")} v{playerVersions[client.Id].version.ToString()} <size=30%>({PV.guid.ToString()})</size>\n</color>";
+                                message += $"{client.Character.Data.PlayerName}:  {ModTranslation.GetString("errorWrongVersion")} v{playerVersions[client.Id].version} <size=30%>({PV.guid})</size>\n";
                                 blockStart = true;
                             }
                         }
                     }
                     if (blockStart) {
                         __instance.StartButton.SetButtonEnableState(true);
-                        __instance.GameStartText.text = message;
-                        __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 2;
+                        ErrorText.text = message;
                     } else {
                         __instance.StartButton.SetButtonEnableState(false);
-                        __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition;
+                        ErrorText.text = "";
                     }
                 }
 
@@ -100,16 +112,15 @@ namespace TheOtherRoles.Patches {
                         kickingTimer += Time.deltaTime;
                         if (kickingTimer > 10) {
                             kickingTimer = 0;
+                            TheOtherRolesPlugin.Logger.LogError("ExitGame : Version is different.");
 			                AmongUsClient.Instance.ExitGame(DisconnectReasons.ExitGame);
                             SceneChanger.ChangeScene("MainMenu");
                         }
-
-                        __instance.GameStartText.text = String.Format(ModTranslation.GetString("errorHostNoVersion"), Math.Round(10 - kickingTimer));
-                        __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 2;
+                        ErrorText.text = String.Format(ModTranslation.GetString("errorHostNoVersion"), Math.Round(10 - kickingTimer));
+                        //ErrorText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 2;
                     } else {
-                        __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition;
                         if (__instance.startState != GameStartManager.StartingStates.Countdown) {
-                            __instance.GameStartText.text = String.Empty;
+                            ErrorText.text = String.Empty;
                         }
                     }
                 }

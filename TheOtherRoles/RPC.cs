@@ -20,7 +20,7 @@ namespace TheOtherRoles
     {
         // Main Controls
 
-        ResetVaribles = 60,
+        ResetVaribles = 70,
         ShareOptions,
         ForceEnd,
         SetRole,
@@ -182,7 +182,9 @@ namespace TheOtherRoles
                 ver = new System.Version(major, minor, build);
             else
                 ver = new System.Version(major, minor, build, revision);
+
             GameStartManagerPatch.playerVersions[clientId] = new GameStartManagerPatch.PlayerVersion(ver, guid);
+            
         }
 
         public static void useUncheckedVent(int ventId, byte playerId, byte isEnter)

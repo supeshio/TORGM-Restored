@@ -31,7 +31,9 @@
 
 	<Target Name="CopyCustomContent" AfterTargets="AfterBuild">
         <Message Text="Second occurrence" />
-        <Copy SourceFiles="$(ProjectDir)\bin\$(Configuration)\net6.0\TheOtherRolesGM.dll" DestinationFolder="$(AmongUs)/BepInEx/plugins/" />
+		<Copy SourceFiles="$(ProjectDir)\bin\$(Configuration)\net6.0\TheOtherRolesGM.dll" DestinationFolder="$(AmongUs)/BepInEx/plugins/" />
+		<Copy SourceFiles="$(ProjectDir)\bin\$(Configuration)\net6.0\TheOtherRolesGM.dll" DestinationFolder="./libs" />
+		<Copy SourceFiles="$(ProjectDir)\bin\$(Configuration)\net6.0\TheOtherRolesGM.dll" DestinationFolder="./libs/TORGM-Restored/BepinEx/plugins" />
     </Target>
 <!--
     <Target Name="PreBuild" BeforeTargets="PreBuildEvent">

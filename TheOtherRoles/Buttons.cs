@@ -14,6 +14,10 @@ namespace TheOtherRoles
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Start))]
     static class HudManagerStartPatch
     {
+
+
+        private static bool init = false;
+
         private static CustomButton engineerRepairButton;
         private static CustomButton janitorCleanButton;
         private static CustomButton timeMasterShieldButton;
@@ -53,8 +57,28 @@ namespace TheOtherRoles
         public static TMPro.TMP_Text hackerAdminTableChargesText;
         public static TMPro.TMP_Text hackerVitalsChargesText;
 
+        private static void HostInfoPanelBold()
+        {
+
+            GameStartManager.Instance.HostInfoPanel.playerName.fontStyle = TMPro.FontStyles.Bold | TMPro.FontStyles.Normal;
+        }
+
+
+
         public static void setCustomButtonCooldowns()
         {
+            if (!init)
+            {
+                try
+                {
+                    CreateButtons(HudManager.Instance);
+                }
+                catch
+                {
+                    TheOtherRolesPlugin.Logger.LogWarning("Button cooldowns not set, either the gamemode does not require them or there's something wrong.");
+                    return;
+                }
+            }
             engineerRepairButton.MaxTimer = 0f;
             janitorCleanButton.MaxTimer = Janitor.cooldown;
             timeMasterShieldButton.MaxTimer = TimeMaster.cooldown;
@@ -113,9 +137,38 @@ namespace TheOtherRoles
             timeMasterShieldButton.isEffectActive = false;
             timeMasterShieldButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
         }
-
         public static void Postfix(HudManager __instance)
         {
+            HostInfoPanelBold();
+            init = false;
+
+            try
+            {
+                if (__instance == null)
+                {
+                    TheOtherRolesPlugin.Logger.LogError("HudManager is null in Postfix");
+                    return;
+                }
+
+                if (__instance.UseButton == null || PlayerControl.LocalPlayer == null)
+                {
+                    TheOtherRolesPlugin.Logger.LogWarning("Cannot initialize buttons: UseButton or LocalPlayer is null");
+                    return;
+                }
+
+                CreateButtons(__instance);
+            }
+            catch (Exception ex)
+            {
+                TheOtherRolesPlugin.Logger.LogFatal("CreateButtonsError:\n" + ex);
+            }
+        }
+
+        public static void CreateButtons(HudManager __instance)
+        {
+
+            // get map id, or raise error to wait...
+            var mapId = GameOptionsManager.Instance.currentNormalGameOptions.MapId;
             // Engineer Repair
             engineerRepairButton = new CustomButton(
                 () =>
@@ -430,7 +483,7 @@ namespace TheOtherRoles
                    if (!hackerVitalsButton.isEffectActive) PlayerControl.LocalPlayer.moveable = true;
                    if (MapBehaviour.Instance && MapBehaviour.Instance.isActiveAndEnabled) MapBehaviour.Instance.Close();
                },
-               GameManager.Instance.LogicOptions.MapId == 3,
+               mapId == 3,
                DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.Admin)
             );
 
@@ -444,7 +497,7 @@ namespace TheOtherRoles
             hackerVitalsButton = new CustomButton(
                () =>
                {
-                   if (GameManager.Instance.LogicOptions.MapId != 1)
+                   if (mapId != 1)
                    {
                        if (Hacker.vitals == null)
                        {
@@ -474,13 +527,13 @@ namespace TheOtherRoles
 
                    Hacker.chargesVitals--;
                },
-               () => { return Hacker.hacker != null && Hacker.hacker == PlayerControl.LocalPlayer && MapOptions.couldUseVitals && PlayerControl.LocalPlayer.isAlive() && GameManager.Instance.LogicOptions.MapId != 0 && GameManager.Instance.LogicOptions.MapId != 3; },
+               () => { return Hacker.hacker != null && Hacker.hacker == PlayerControl.LocalPlayer && MapOptions.couldUseVitals && PlayerControl.LocalPlayer.isAlive() && mapId != 0 && mapId != 3; },
                () =>
                {
                    if (hackerVitalsChargesText != null)
                        hackerVitalsChargesText.text = String.Format(ModTranslation.GetString("hackerChargesText"), Hacker.chargesVitals, Hacker.toolsNumber);
-                   hackerVitalsButton.actionButton.graphic.sprite = GameManager.Instance.LogicOptions.MapId == 1 ? Hacker.getLogSprite() : Hacker.getVitalsSprite();
-                   hackerVitalsButton.actionButton.OverrideText(GameManager.Instance.LogicOptions.MapId == 1 ?
+                   hackerVitalsButton.actionButton.graphic.sprite = mapId == 1 ? Hacker.getLogSprite() : Hacker.getVitalsSprite();
+                   hackerVitalsButton.actionButton.OverrideText(mapId == 1 ?
                         TranslationController.Instance.GetString(StringNames.DoorlogLabel) :
                         TranslationController.Instance.GetString(StringNames.VitalsLabel));
                    return Hacker.chargesVitals > 0 && MapOptions.canUseVitals;
@@ -504,12 +557,12 @@ namespace TheOtherRoles
                    if(!hackerAdminTableButton.isEffectActive) PlayerControl.LocalPlayer.moveable = true;
                    if (Minigame.Instance)
                    {
-                       if (GameManager.Instance.LogicOptions.MapId == 1) Hacker.doorLog.ForceClose();
+                       if (mapId == 1) Hacker.doorLog.ForceClose();
                        else Hacker.vitals.ForceClose();
                    }
                },
                false,
-               GameManager.Instance.LogicOptions.MapId == 1 ?
+               mapId == 1 ?
                     TranslationController.Instance.GetString(StringNames.DoorlogLabel) :
                     TranslationController.Instance.GetString(StringNames.VitalsLabel)
             );
@@ -921,7 +974,7 @@ namespace TheOtherRoles
                         SecurityGuard.ventTarget = null;
 
                     }
-                    else if (GameManager.Instance.LogicOptions.MapId != 1 && MapOptions.couldUseCameras)
+                    else if (mapId != 1 && MapOptions.couldUseCameras)
                     { // Place camera if there's no vent and it's not MiraHQ
                         var pos = PlayerControl.LocalPlayer.transform.position;
                         byte[] buff = new byte[sizeof(float) * 2];
@@ -949,7 +1002,7 @@ namespace TheOtherRoles
                 () => { return SecurityGuard.securityGuard != null && SecurityGuard.securityGuard == PlayerControl.LocalPlayer && PlayerControl.LocalPlayer.isAlive() && SecurityGuard.remainingScrews >= Mathf.Min(SecurityGuard.ventPrice, SecurityGuard.camPrice); },
                 () =>
                 {
-                    if (SecurityGuard.ventTarget == null && GameManager.Instance.LogicOptions.MapId != 1)
+                    if (SecurityGuard.ventTarget == null && mapId != 1)
                     {
                         securityGuardButton.buttonText = ModTranslation.GetString("PlaceCameraText");
                         securityGuardButton.Sprite = SecurityGuard.getPlaceCameraButtonSprite();
@@ -966,7 +1019,7 @@ namespace TheOtherRoles
                         return SecurityGuard.remainingScrews >= SecurityGuard.ventPrice && PlayerControl.LocalPlayer.CanMove;
                     }
 
-                    return GameManager.Instance.LogicOptions.MapId != 1 && MapOptions.couldUseCameras && SecurityGuard.remainingScrews >= SecurityGuard.camPrice && PlayerControl.LocalPlayer.CanMove;
+                    return mapId != 1 && MapOptions.couldUseCameras && SecurityGuard.remainingScrews >= SecurityGuard.camPrice && PlayerControl.LocalPlayer.CanMove;
                 },
                 () => { securityGuardButton.Timer = securityGuardButton.MaxTimer; },
                 SecurityGuard.getPlaceCameraButtonSprite(),
@@ -986,9 +1039,8 @@ namespace TheOtherRoles
 
             securityGuardCamButton = new CustomButton(
                 () => {
-                    if (GameManager.Instance.LogicOptions.MapId != 1) {
+                    if (mapId != 1) {
                         if (SecurityGuard.minigame == null) {
-                            byte mapId = GameManager.Instance.LogicOptions.MapId;
                             var e = UnityEngine.Object.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("Surv_Panel"));
                             if (mapId == 0 || mapId == 3) e = UnityEngine.Object.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("SurvConsole"));
                             else if (mapId == 4) e = UnityEngine.Object.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("task_cams"));
@@ -1017,8 +1069,8 @@ namespace TheOtherRoles
                 () => {
                     if (securityGuardChargesText != null)
                         securityGuardChargesText.text = securityGuardChargesText.text = String.Format(ModTranslation.GetString("hackerChargesText"), SecurityGuard.charges, SecurityGuard.maxCharges);
-                    securityGuardCamButton.actionButton.graphic.sprite = GameManager.Instance.LogicOptions.MapId == 1 ? SecurityGuard.getLogSprite() : SecurityGuard.getCamSprite();
-                    securityGuardCamButton.actionButton.OverrideText(GameManager.Instance.LogicOptions.MapId == 1 ?
+                    securityGuardCamButton.actionButton.graphic.sprite = mapId == 1 ? SecurityGuard.getLogSprite() : SecurityGuard.getCamSprite();
+                    securityGuardCamButton.actionButton.OverrideText(mapId == 1 ?
                         TranslationController.Instance.GetString(StringNames.SecurityLogsSystem) :
                         TranslationController.Instance.GetString(StringNames.SecurityCamsSystem));
                     return PlayerControl.LocalPlayer.CanMove && SecurityGuard.charges > 0;
@@ -1043,7 +1095,7 @@ namespace TheOtherRoles
                     PlayerControl.LocalPlayer.moveable = true;
                 },
                 false,
-                GameManager.Instance.LogicOptions.MapId == 1 ?
+                mapId == 1 ?
                     TranslationController.Instance.GetString(StringNames.SecurityLogsSystem) :
                     TranslationController.Instance.GetString(StringNames.SecurityCamsSystem)
             );
@@ -1394,7 +1446,10 @@ namespace TheOtherRoles
             );
             witchSpellButton.buttonText = ModTranslation.GetString("WitchText");
 
+
+
             ButtonsGM.makeButtons(__instance);
+            init = true;
 
             // Set the default (or settings from the previous game) timers/durations when spawning the buttons
             setCustomButtonCooldowns();
