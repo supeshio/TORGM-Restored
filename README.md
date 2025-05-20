@@ -1,6 +1,6 @@
 ﻿# The Other Roles: GM Edition
 
-This fork is based on TORGM v3.5.4, and it supports Among Us `v2024.9.4`.
+This fork is based on TORGM v3.5.4, and it supports new Version.
 
 > [!NOTE]
 > * Custom hats are not (even never) supported yet.<br/>
