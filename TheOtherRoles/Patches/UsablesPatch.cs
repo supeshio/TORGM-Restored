@@ -186,7 +186,7 @@ namespace TheOtherRoles.Patches
                 if (__instance.name.StartsWith("JackInTheBoxVent_"))
                 {
                     __instance.SetButtons(isEnter && canMoveInVents);
-                    MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.UseUncheckedVent, Hazel.SendOption.Reliable);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.UseUncheckedVent, Hazel.SendOption.Reliable);
                     writer.WritePacked(__instance.Id);
                     writer.Write(PlayerControl.LocalPlayer.PlayerId);
                     writer.Write(isEnter ? byte.MaxValue : (byte)0);

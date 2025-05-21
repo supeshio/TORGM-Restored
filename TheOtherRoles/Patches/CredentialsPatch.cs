@@ -10,7 +10,7 @@ namespace TheOtherRoles.Patches
     public static class CredentialsPatch
     {
 
-        public const string BaseCredentials = $@"<size=130%><color=#ff351f>TheOtherRoles GM</color></size> v{TheOtherRolesPlugin.VersionString}</size>";
+        public const string BaseCredentials = $@"<size=130%><color=#ff351f>TheOtherRoles GM - Restored</color></size> v{TheOtherRolesPlugin.VersionString}</size>";
 
         public const string ContributorsCredentials = "Original TORGM (v3.5.4) GitHub Contributors: Alex2911, amsyarasyiq, gendelo3\n{0}";
 
@@ -33,6 +33,27 @@ namespace TheOtherRoles.Patches
                     position.DistanceFromEdge = new Vector3(0f, 0.1f, 0);
                 }
                 position.AdjustPosition();
+            }
+        }
+        [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
+        private static class VersionShowerPatch
+        {
+
+            static void Prefix(VersionShower __instance)
+            {
+            }
+            static void Postfix(VersionShower __instance)
+            {
+                TextMeshPro Text = new GameObject("VersionText").AddComponent<TextMeshPro>();
+                Text.text = $"v{TheOtherRolesPlugin.VersionString}";
+                ;
+                Text.fontSize = 3;
+                Text.alignment = TextAlignmentOptions.Right;
+                Text.enableWordWrapping = false;
+                Text.transform.SetParent(__instance.transform);
+                Text.transform.localPosition = new Vector3(0, 0.8f, -1f);
+                Text.transform.localScale = Vector3.one;
+
             }
         }
 
