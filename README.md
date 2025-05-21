@@ -1,6 +1,6 @@
 ﻿# The Other Roles: GM Edition
 
-This fork is based on TORGM v3.5.4, and it supports Among Us `v2024.9.4`.
+This fork is based on TORGM v3.5.4, and it supports new version.
 
 > [!NOTE]
 > * Custom hats are not (even never) supported yet.<br/>
@@ -69,7 +69,8 @@ The [Role Assignment](#role-assignment) sections explains how the roles are bein
 # Releases
 | Among Us - Version | Mod Version | Link |
 |----------|-------------|-----------------|
-| 16.0.2s | v4.0.0 (based on JieGeLovesDengDuaLange/GM) | [Download](https://github.com/supeshio/TORGM-Restored/releases/download/v4.0.0/TheOtherRolesGM.dll)
+| 16.0.5s | v4.1.1 | [Download](https://github.com/supeshio/TORGM-Restored/releases/download/v4.1.1/TheOtherRolesGM.dll)
+| 16.0.2s | v4.1.0 (based on JieGeLovesDengDuaLange/GM) | [Download](https://github.com/supeshio/TORGM-Restored/releases/download/v4.1.0/TheOtherRolesGM.dll)
 | 2024.8.13s | v24.8.13.1 (based on v3.5.4 GM) | [Download](https://github.com/JieGeLovesDengDuaLang/TheOtherRoles-GM/releases/download/v24.8.13.1/TheOtherRolesGM.dll)
 | 2022.2.24s | v3.5.4 GM | [Download](https://github.com/yukinogatari/TheOtherRoles-GM/releases/download/v3.5.4/TheOtherRoles-GM.v3.5.4.zip)
 | 2022.2.24s | v3.5.3 GM | [Download](https://github.com/yukinogatari/TheOtherRoles-GM/releases/download/v3.5.3/TheOtherRoles-GM.v3.5.3.zip)
