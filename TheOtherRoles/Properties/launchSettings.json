@@ -6,6 +6,10 @@
     "プロファイル 1": {
       "commandName": "Executable",
       "executablePath": "$(AmongUs)\\Among Us.exe"
+    },
+    "4": {
+      "commandName": "Executable",
+      "executablePath": "$(AmongUsStartBat)\\new4.bat"
     }
   }
 }

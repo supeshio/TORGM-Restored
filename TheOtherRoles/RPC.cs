@@ -20,7 +20,7 @@ namespace TheOtherRoles
     {
         // Main Controls
 
-        ResetVaribles = 70,
+        ResetVaribles = 80,
         ShareOptions,
         ForceEnd,
         SetRole,
@@ -37,7 +37,7 @@ namespace TheOtherRoles
 
         // Role functionality
 
-        EngineerFixLights = 91,
+        EngineerFixLights = 100,
         EngineerUsedRepair,
         CleanBody,
         SheriffKill,

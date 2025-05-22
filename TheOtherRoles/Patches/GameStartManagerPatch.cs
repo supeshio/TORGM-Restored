@@ -98,10 +98,10 @@ namespace TheOtherRoles.Patches {
                         }
                     }
                     if (blockStart) {
-                        __instance.StartButton.SetButtonEnableState(true);
+                        __instance.StartButton.SetButtonEnableState(false);
                         ErrorText.text = message;
                     } else {
-                        __instance.StartButton.SetButtonEnableState(false);
+                        __instance.StartButton.SetButtonEnableState(true);
                         ErrorText.text = "";
                     }
                 }
